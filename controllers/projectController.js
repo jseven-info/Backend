@@ -1,4 +1,5 @@
 // controllers/projectController.js
+const mongoose = require('mongoose');
 const Project = require('../models/Project');
 
 exports.getAll = async (req, res) => {
@@ -47,10 +48,6 @@ exports.update = async (req, res) => {
   }
 };
 
-
-
-
-
 exports.delete = async (req, res) => {
   try {
     const deleted = await Project.findByIdAndDelete(req.params.id);
@@ -62,14 +59,15 @@ exports.delete = async (req, res) => {
   }
 };
 
-
-
-
-
-
 exports.getById = async (req, res) => {
+  const { id } = req.params;
+
+  if (!id || !mongoose.Types.ObjectId.isValid(id)) {
+    return res.status(400).json({ message: 'Invalid or missing project ID' });
+  }
+
   try {
-    const project = await Project.findById(req.params.id);
+    const project = await Project.findById(id);
     if (!project) {
       return res.status(404).json({ message: 'Project not found' });
     }
