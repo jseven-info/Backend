@@ -7,10 +7,22 @@ const app = express();
 
 
 
+const allowedOrigins = [
+  'http://localhost:5173',
+  'https://d3c1-2409-40f3-101b-15e2-f845-21bc-7933-5f2d.ngrok-free.app'
+];
+
 app.use(cors({
-  origin: 'http://localhost:5173', // frontend origin
-  credentials: true, // allow cookies and authorization headers
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,
 }));
+
 
 
 app.use(express.json());
