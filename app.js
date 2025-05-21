@@ -5,8 +5,7 @@ require('dotenv').config();
 
 const app = express();
 
-
-
+// ✅ Allow specific origins
 const allowedOrigins = [
   'http://localhost:5173',
   'https://d3c1-2409-40f3-101b-15e2-f845-21bc-7933-5f2d.ngrok-free.app'
@@ -23,14 +22,24 @@ app.use(cors({
   credentials: true,
 }));
 
-
-
 app.use(express.json());
 
-mongoose.connect(process.env.MONGO_URI).then(() => console.log('MongoDB Connected'));
+// ✅ Connect to MongoDB
+mongoose.connect(process.env.MONGO_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+}).then(() => console.log('✅ MongoDB Connected'))
+  .catch(err => console.error('❌ MongoDB Connection Error:', err));
 
+// ✅ Add a default root route for Render & testing
+app.get('/', (req, res) => {
+  res.send('✅ API is running...');
+});
+
+// ✅ Register routes
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/projects', require('./routes/projects'));
 
+// ✅ Start the server
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server running on ${PORT}`));
+app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
