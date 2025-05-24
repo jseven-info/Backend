@@ -10,7 +10,7 @@ const allowedOrigins = [
   'http://localhost:5173',
   'https://d3c1-2409-40f3-101b-15e2-f845-21bc-7933-5f2d.ngrok-free.app',
   'https://frontend-weld-three.vercel.app',
-  'https://www.j7qa.com' // ✅ ADD THIS LINE
+  'https://www.jsevenprojects.com' // ✅ ADD THIS LINE
 
 ];
 
