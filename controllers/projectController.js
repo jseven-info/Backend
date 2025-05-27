@@ -1,4 +1,3 @@
-// controllers/projectController.js
 const mongoose = require('mongoose');
 const Project = require('../models/Project');
 
@@ -14,30 +13,40 @@ exports.getAll = async (req, res) => {
 
 exports.create = async (req, res) => {
   try {
-    const { name, status, startDate, endDate } = req.body;
+    let { name, status, startDate, endDate } = req.body;
+
+    // Convert invalid dates (like "TBA" or empty) to null
+    if (!startDate || startDate === 'TBA') startDate = null;
+    if (!endDate || endDate === 'TBA') endDate = null;
+
+    if (!name || !status) {
+      return res.status(400).json({ message: 'Name and status are required' });
+    }
 
     const newProject = new Project({
       name,
       status,
-      startDate: startDate || null,
-      endDate: endDate || null
+      startDate,
+      endDate
     });
 
     const savedProject = await newProject.save();
     res.json(savedProject);
   } catch (err) {
-    console.error('❌ Error in projectController.create:', err.message);
+    console.error('❌ Error in projectController.create:', err);
     res.status(500).json({ message: 'Failed to create project', error: err.message });
   }
 };
 
+
 exports.update = async (req, res) => {
   try {
-    const data = {
-      ...req.body,
-      startDate: req.body.startDate || null,
-      endDate: req.body.endDate || null
-    };
+    let { name, status, startDate, endDate } = req.body;
+
+    if (startDate === 'TBA') startDate = null;
+    if (endDate === 'TBA') endDate = null;
+
+    const data = { name, status, startDate, endDate };
 
     const updated = await Project.findByIdAndUpdate(req.params.id, data, { new: true });
     if (!updated) return res.status(404).json({ message: 'Project not found' });
